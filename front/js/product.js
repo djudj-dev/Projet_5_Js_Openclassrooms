@@ -1,10 +1,14 @@
 
 const areNotNull = (elements) => {
-  const isNotComplete = elements.every( element => !!element.value);
-  return !!isNotComplete
+  const nullValue = ['', '0']
+  const isNotComplete = elements.every( element => (
+    !nullValue.some( nullState => element.value === nullState)
+  ));
+
+  return isNotComplete
 }
 
-const formatData = (id, target) => {
+const formDataChecker = (id, target) => {
   const selectColor = document.getElementById('colors')
   const selectQuantity = document.getElementById('quantity')
 
@@ -45,12 +49,15 @@ const insertHtml = async (id) => {
     let option = createElement('option', { innerHTML: color, value: color });
     document.getElementById('colors').appendChild(option);
   }
+
+  document.getElementById('colors').value = ""
+  document.getElementById('quantity').value = "0";
 }
 
 window.onload = () => {
   const UrlIdParams = new URLSearchParams(location.search).get('id')
   insertHtml(UrlIdParams)
-  document.getElementById('addToCart').addEventListener('click', (event) => formatData(UrlIdParams, event.target))
+  document.getElementById('addToCart').addEventListener('click', (event) => formDataChecker(UrlIdParams, event.target))
 }
 
 

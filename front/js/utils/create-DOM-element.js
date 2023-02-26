@@ -5,7 +5,7 @@ const createElement = (type, elementAttribute = undefined, eventListener = undef
   });
   if (eventListener) {
     const { event, eventCallback } = eventListener 
-    element.addEventListener(event, eventCallback)
+    element.addEventListener(event, (event) => eventCallback(event))
   }
 
   return element;

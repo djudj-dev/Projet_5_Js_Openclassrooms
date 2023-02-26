@@ -35,12 +35,12 @@ h2 {
 	flex-direction: column;
 	justify-content: space-between;
 }
-.cart__item__content__titlePrice {
+.cart__item__content__description {
 	display: flex;
 	justify-content: space-between;
 }
-.cart__item__content__titlePrice h2,
-.cart__item__content__titlePrice p {
+.cart__item__content__description h2,
+.cart__item__content__description p {
 	margin: 0;
 }
 .cart__item__content__settings p {
