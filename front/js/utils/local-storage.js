@@ -66,7 +66,7 @@ class LocalStorageManager {
     const { findInCart, setToLocalStorage } = LocalStorageManager
     const actualCart = this.getCart();
     const { state, index } = findInCart(productsObject,  actualCart);
-
+    
     if (state) {
       actualCart[index].quantity += incrementCartQuantity;
       setToLocalStorage(actualCart);

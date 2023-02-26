@@ -75,8 +75,19 @@
 }
 .item__content__addButton {
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
 	padding-top: 32px;
+}
+.item__content__addButton p {
+	text-align: center;
+	font-weight: bold;
+	color: red;
+	padding: 10px;
+	margin: 0 0 10px 0;
+	background-color: white;
+	border-radius: 2rem;
 }
 .item__content__addButton button {
 	font-size: 22px;
@@ -86,6 +97,7 @@
 	color: white;
 	padding: 18px 28px;
 	cursor: pointer;
+	
 }
 .item__content__addButton button:hover {
 	box-shadow: rgba(42, 18, 206, 0.9) 0 0 22px 6px;
