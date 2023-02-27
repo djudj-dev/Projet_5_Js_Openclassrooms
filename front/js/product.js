@@ -41,7 +41,7 @@ const insertHtml = async (id) => {
   const image = createElement('img',{ src: product.imageUrl, alt: product.altTxt });
   document.getElementsByClassName('item__img')[0].appendChild(image);
   
-  document.getElementById('price').innerHTML = product.price;
+  document.getElementById('price').innerHTML = priceFormat.format(product.price);
   document.getElementById('title').innerHTML = product.name;
   document.getElementById('description').innerHTML = product.description;
   

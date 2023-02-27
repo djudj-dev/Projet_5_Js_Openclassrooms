@@ -118,7 +118,9 @@ h2 {
 }
 .cart__order__form__submit {
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 }
 .cart__order__form__submit input {
 	font-size: 22px;

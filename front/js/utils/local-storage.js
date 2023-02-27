@@ -35,6 +35,10 @@ class LocalStorageManager {
     return LocalStorageManager.singleton
   }
 
+  resetCart = () => (
+    localStorage.setItem(LocalStorageManager.localStorageCart, '[]')
+  )
+
   getCart = () => {
     const result = () => JSON.parse(localStorage.getItem(LocalStorageManager.localStorageCart))
     if(!result()) {
@@ -110,5 +114,5 @@ class LocalStorageManager {
   }
 }
 
-const {addToCart, getCart, deleteFromCart, incrementCartQuantity, decrementCartQuantity, setQuantity } = LocalStorageManager.getSingleton()
+const {addToCart, getCart, deleteFromCart, incrementCartQuantity, decrementCartQuantity, setQuantity , resetCart} = LocalStorageManager.getSingleton()
 

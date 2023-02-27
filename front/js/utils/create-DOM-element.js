@@ -10,3 +10,5 @@ const createElement = (type, elementAttribute = undefined, eventListener = undef
 
   return element;
 }
+
+const priceFormat = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })

@@ -24,7 +24,7 @@ cartRender = async () => {
 
           const name__element = createElement('h2', { innerHTML: name });
           const descritpion__element = createElement('p', { innerHTML: color });
-          const descritpion__price = createElement('p', { innerHTML: price });
+          const descritpion__price = createElement('p', { innerHTML: priceFormat.format(price) });
         cart__item__content_description.append(name__element, descritpion__element, descritpion__price);
   
         const  cart__item__content__settings = createElement('div', { className: 'cart__item__content__settings' })
@@ -85,53 +85,100 @@ const nameRegex = /^[a-zA-Z]{2,30}$/
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 const cityRegex = /^\w{3,40}$/
 
-const order = document.getElementById('order').addEventListener('click', (event) => { 
+const order = document.getElementById('order').addEventListener('click', async (event) => { 
   event.preventDefault()
-  console.log(onSubmit())
+  const postData = formReducer()
+  const postResult = postData ?  await postOrder(postData) : null;
+  postResult && (redirectPaymentConfirm(postResult.orderId))
 });
 
-const onSubmit = () => {
-  
-  const status = {
-    firstName: nameRegex.test(document.getElementById('firstName').value), 
-    lastName: nameRegex.test(document.getElementById('lastName').value),
-    email: emailRegex.test(document.getElementById('email').value),
-    city: cityRegex.test(document.getElementById('city').value)
-  }
-  
-  isVerified = Object.values(status).every(element => !!element) 
-  
-  if (isVerified) {
-    const idArray = [];
-  
-    getCart().forEach( element => (
-      idArray.push(element.id)
-    )); 
+const formReducer = () => {
+  const warnigText = document.getElementById('warning_message')
+  warnigTextContainer = warnigText;
 
-    const postObject = {
-      contact : {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        address: document.getElementById('address').value,
-        email: document.getElementById('email').value,
-        city: document.getElementById('city').value
-      },
-      product: idArray
+  const testInputObject = {
+    firstName: {
+      input: document.getElementById('firstName').value, 
+      regex: nameRegex,
+      inputName: 'Prénom'
+    },
+    lastName: {
+      input: document.getElementById('lastName').value,
+      regex: nameRegex,
+      inputName: 'Nom'
+    },
+    email: {
+      input: document.getElementById('email').value,
+      regex: emailRegex,
+      inputName: 'Email'
+    },
+    city: {
+      input: document.getElementById('city').value,
+      regex: cityRegex,
+      inputName: 'Ville'
     }
+  }
+  const areInputsValid = isFormValid(testInputObject);
 
-    return { state: true, payload: postObject };
+  if (areInputsValid.status) {  
+    warnigText.setAttribute('hidden',true)
+    const postObject = formBuilder()
+
+    return postObject;
   }
 
-  let errorString = `veillez renseigner les champs : `;
-  !status.firstName && (errorString += '- Prénom '); 
-  !status.lastName && (errorString += '- Nom ');
-  !status.city && (errorString += '- Ville ');
-  !status.email && (errorString += '- Email ');
+  let errorString = `veillez renseigner le(s) champ(s) : `;
+  areInputsValid.inputs.forEach((element => (
+    errorString += `- ${element} `
+  )));
 
-  return { state: false, payload: errorString };
-} 
+  warnigText.innerHTML = errorString;
+  warnigText.removeAttribute('hidden');
+}
 
 
+const isFormValid = (testFormObject) => {
+  let inputWrong = [];
+  const state = Object.values(testFormObject).every(({input, regex, inputName}) => {
+    const isValid = regex.test(input)
+    !isValid && (inputWrong = [...inputWrong, inputName])
+    return isValid
+  })
+  const returnObject = { status: state };
+  !state && (returnObject.inputs = inputWrong)
 
+  return returnObject
+}
+
+
+const formBuilder = () => {
+  const idArray = [];
+  getCart().forEach( ({id, quantity}) => {
+    if (quantity > 1) {
+      for (let i = 0; i <= quantity; i++) {
+        idArray.push(id);
+      }
+    } else {
+      idArray.push(id);
+    }
+  }); 
+
+  const postObject = {
+    contact : {
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      address: document.getElementById('address').value,
+      email: document.getElementById('email').value,
+      city: document.getElementById('city').value
+    },
+    products: idArray
+  }
+
+  return postObject;
+}
+
+const redirectPaymentConfirm = (paymentId) => {
+  location.href = `file:///home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/confirmation.html?paymentId=${paymentId}`
+}
 
 window.onload = cartRender();
