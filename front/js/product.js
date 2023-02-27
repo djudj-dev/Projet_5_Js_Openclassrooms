@@ -1,3 +1,21 @@
+const insertHtml = async (id) => {  
+  const product = await getProduct(id);
+  
+  const image = createElement('img',{ src: product.imageUrl, alt: product.altTxt });
+  document.getElementsByClassName('item__img')[0].appendChild(image);
+  
+  document.getElementById('price').innerHTML = priceFormat.format(product.price);
+  document.getElementById('title').innerHTML = product.name;
+  document.getElementById('description').innerHTML = product.description;
+  
+  for (let color of product.colors) {
+    let option = createElement('option', { innerHTML: color, value: color });
+    document.getElementById('colors').appendChild(option);
+  }
+
+  document.getElementById('colors').value = ""
+  document.getElementById('quantity').value = "0";
+}
 
 const areNotNull = (elements) => {
   const nullValue = ['', '0']
@@ -35,24 +53,12 @@ const formDataChecker = (id, target) => {
   }
 }
 
-const insertHtml = async (id) => {  
-  const product = await getProduct(id);
-  
-  const image = createElement('img',{ src: product.imageUrl, alt: product.altTxt });
-  document.getElementsByClassName('item__img')[0].appendChild(image);
-  
-  document.getElementById('price').innerHTML = priceFormat.format(product.price);
-  document.getElementById('title').innerHTML = product.name;
-  document.getElementById('description').innerHTML = product.description;
-  
-  for (let color of product.colors) {
-    let option = createElement('option', { innerHTML: color, value: color });
-    document.getElementById('colors').appendChild(option);
-  }
-
-  document.getElementById('colors').value = ""
-  document.getElementById('quantity').value = "0";
-}
+/* 
+  ===========================
+  | End of declarative code |
+  |   start Onload init     |
+  ===========================
+*/
 
 window.onload = () => {
   const UrlIdParams = new URLSearchParams(location.search).get('id')

@@ -14,4 +14,11 @@ const insertHtml = async (root) => {
   }
 }
 
+/* 
+  ===========================
+  | End of declarative code |
+  |   start Onload init     |
+  ===========================
+*/
+
 window.onload = () => insertHtml(document.getElementById('items'))
