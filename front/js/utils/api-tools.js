@@ -89,8 +89,8 @@ class ApiCalls {
     } catch (error) {
       console.error('Error on method getAllProducts() of ApiCalls instance | Error from =>', error);
     }
-    Object.values(fetchResult).forEach(() => {
-      if (typeVerificator(productTypeGuard)) {
+    Object.values(fetchResult).forEach((value) => {
+      if (!typeVerificator(productTypeGuard, value)) {
         throw new Error('return of method getAllProducts() of ApiCalls instance don\'t have the good type');
       }
     });
@@ -109,7 +109,7 @@ class ApiCalls {
     } catch (error) {
       console.error('Error on method getProduct() of ApiCalls instance | Error from =>', error);
     }
-    if (typeVerificator(productTypeGuard)) {
+    if (!typeVerificator(productTypeGuard, fetchResult)) {
       throw new Error('return of method getProduct() of ApiCalls instance don\'t have the good type');
     }
 
@@ -127,7 +127,7 @@ class ApiCalls {
     } catch (error) {
       console.error('Error on method postOrder() of ApiCalls instance | Error from =>', error);
     }
-    if (typeVerificator(orderTypeGuard)) {
+    if (!typeVerificator(orderTypeGuard, fetchResult)) {
       throw new Error('return of method getProduct() of ApiCalls instance don\'t have the good type');
     }
 

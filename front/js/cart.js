@@ -213,6 +213,7 @@ const redirectPaymentConfirm = (paymentId) => (
 **/
 const nameRegex = /^[a-zA-Z]{2,30}$/;
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const addressRegex = /^(\d+) ?([A-Za-z](?= ))? (.*?) ([^ ]+?) ?((?<= )APT)? ?((?<= )\d*)?$/;
 const cityRegex = /^\w{3,40}$/;
 
 const formInputsObject = {
@@ -228,7 +229,7 @@ const formInputsObject = {
   },
   address: {
     input: document.getElementById('address'),
-    regex: cityRegex,
+    regex: addressRegex,
     errorInput: document.getElementById('addressErrorMsg')
   },
   city: {

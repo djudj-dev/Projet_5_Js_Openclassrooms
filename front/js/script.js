@@ -5,9 +5,10 @@
 **/
 
 const insertHtml = async (root) => {
-  const { imageUrl, name, description, altTxt, _id} = await getAllProducts();
+  const products = await getAllProducts();
 
   for (let product of products) {
+    const { imageUrl, name, description, altTxt, _id} = product
     let linkContainer = createElement('a', {
       href : `/home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/product.html?id=${_id}`
     });
@@ -15,9 +16,9 @@ const insertHtml = async (root) => {
     let image = createElement('img', { src: imageUrl, alt: altTxt });
     let title = createElement('h3', { className: 'productName', innerHTML: name });
     let text = createElement('p', { className: 'productDescription', innerHTML: description });
-    
+
     article.append(image, title, text);
-    link.appendChild(article);
+    linkContainer.appendChild(article);
     root.appendChild(linkContainer);
   }
 }
