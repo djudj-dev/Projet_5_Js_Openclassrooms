@@ -1,9 +1,22 @@
+/**
+ * Function for display Imutable data Syncronized from :
+ * - LocalStorage 'cart'
+ * - API
+ * At every value change cart the function :
+ * - call her-self
+ * - re-synchronise new data with api
+ * - display all content with dynamics cart data needed
+ * For have the best reactive ,syncronized and  non-compromized data
+ * @return { void }
+**/
+
 cartRender = async () => {
   const actualCart = getCart();
   const container = document.getElementById('cart__items')
   let articlesArray = []
   let totalPrice = 0;
   let totalProduct = 0;
+
   for (product of actualCart) {
     const { color, id, quantity } =  product;
     const { name, price, imageUrl, altTxt } = await getProduct(product.id);
@@ -81,31 +94,73 @@ cartRender = async () => {
   articlesArray.forEach( article => container.appendChild(article));
 }
 
-const isFormValid = (testFormObject) => {
+/**
+ * Function for check is form data is valid
+ * check all the input with their regex
+ * if all good return object with true status
+ * else return status false & input(s) invalid 
+ * @return { state: booleans, inputs?: string[] }
+**/
+
+
+const isFormValid = () => {
+  const nameRegex = /^[a-zA-Z]{2,30}$/;
+  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  const cityRegex = /^\w{3,40}$/;
+
+  const testInputsObject = {
+    firstName: {
+      input: document.getElementById('firstName').value, 
+      regex: nameRegex,
+      inputName: 'Prénom'
+    },
+    lastName: {
+      input: document.getElementById('lastName').value,
+      regex: nameRegex,
+      inputName: 'Nom'
+    },
+    email: {
+      input: document.getElementById('email').value,
+      regex: emailRegex,
+      inputName: 'Email'
+    },
+    city: {
+      input: document.getElementById('city').value,
+      regex: cityRegex,
+      inputName: 'Ville'
+    }
+  } 
+  
   let inputWrong = [];
-  const state = Object.values(testFormObject).every(({input, regex, inputName}) => {
+  const state = Object.values(testInputsObject).forEach(({input, regex, inputName}) => {
     const isValid = regex.test(input)
     !isValid && (inputWrong = [...inputWrong, inputName])
-    return isValid
   })
-  const returnObject = { status: state };
+
+  const returnObject = { status: (inputWrong.length === 0) };
   !state && (returnObject.inputs = inputWrong)
 
   return returnObject
 }
 
-const formBuilder = () => {
+/**
+ * Function for format data for orderPost 
+ * from inputs value & LocalStorage 'cart'
+ * @return { state: booleans, inputs?: string[] }
+**/
+
+const formatPostData = () => {
   const idArray = [];
   getCart().forEach( ({id, quantity}) => {
     if (quantity > 1) {
       for (let i = 0; i <= quantity; i++) {
-        idArray.push(id);
+        return idArray.push(id);
       }
-    } else {
-      idArray.push(id);
     }
-  }); 
-  
+
+    return idArray.push(id);
+  });
+
   const postObject = {
     contact : {
       firstName: document.getElementById('firstName').value,
@@ -120,20 +175,27 @@ const formBuilder = () => {
   return postObject;
 }
 
-const formReducer = (testInputsObject) => {
-  const warnigText = document.getElementById('warning_message')
+/**
+ * Reducer of actions after for Submit 
+ * if form is good return the data for post the order 
+ * else display error message to customer & return undefined  
+ * @return { {contact:{ customerInfoData }, product: string[] } | undefined }
+**/
+
+const formReducer = () => {
+  const warnigText = document.getElementById('warning_message');
   warnigTextContainer = warnigText;
 
-  const areInputsValid = isFormValid(testInputsObject);
+  const areInputsValid = isFormValid();
 
   if (areInputsValid.status) {  
     warnigText.setAttribute('hidden',true)
-    const postObject = formBuilder()
+    const postObject = formatPostData()
 
     return postObject;
   }
 
-  let errorString = `veillez renseigner le(s) champ(s) : `;
+  let errorString = `veuillez renseigner le(s) champ(s) : `;
   areInputsValid.inputs.forEach((element => (
     errorString += `- ${element} `
   )));
@@ -142,50 +204,27 @@ const formReducer = (testInputsObject) => {
   warnigText.removeAttribute('hidden');
 }
 
+
+/**
+ * Redirect user to confimation page with payementId URL in parameter 
+ * @return { void }
+**/
+
 const redirectPaymentConfirm = (paymentId) => {
   location.href = `file:///home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/confirmation.html?paymentId=${paymentId}`
 }
 
-/* 
-  ===========================
-  | End of declarative code |
-  |   start Onload init     |
-  ===========================
-*/
-
-const nameRegex = /^[a-zA-Z]{2,30}$/
-const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-const cityRegex = /^\w{3,40}$/
-
-const testInputsObject = {
-  firstName: {
-    input: document.getElementById('firstName').value, 
-    regex: nameRegex,
-    inputName: 'Prénom'
-  },
-  lastName: {
-    input: document.getElementById('lastName').value,
-    regex: nameRegex,
-    inputName: 'Nom'
-  },
-  email: {
-    input: document.getElementById('email').value,
-    regex: emailRegex,
-    inputName: 'Email'
-  },
-  city: {
-    input: document.getElementById('city').value,
-    regex: cityRegex,
-    inputName: 'Ville'
-  }
-}
+/**
+ * End of the declarative code
+ * init the render & event with window.onload
+**/
 
 window.onload = () => {
   cartRender()
-  const order = document.getElementById('order').addEventListener('click', async (event) => { 
+  document.getElementById('order').addEventListener('click', async (event) => { 
     event.preventDefault();
-    const postData = formReducer(testInputsObject);
-    const postResult = postData ?  await postOrder(postData) : null;
+    const postData = formReducer();
+    const postResult = postData ? await postOrder(postData) : null;
     postResult && (redirectPaymentConfirm(postResult.orderId));
   });
 }

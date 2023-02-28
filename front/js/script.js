@@ -1,3 +1,9 @@
+/**
+ * Insert the dynamic Html inside the root HtmlNode, from the result of API request 
+ * @param { root: HtlmNode }
+ * @return  { void }  
+**/
+
 const insertHtml = async (root) => {
   const products = await getAllProducts();
   for (let product of products) {
@@ -14,11 +20,9 @@ const insertHtml = async (root) => {
   }
 }
 
-/* 
-  ===========================
-  | End of declarative code |
-  |   start Onload init     |
-  ===========================
-*/
+/** 
+ * End of the declarative code 
+ * init the render with window.onload 
+**/
 
 window.onload = () => insertHtml(document.getElementById('items'))

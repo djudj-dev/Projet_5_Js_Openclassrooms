@@ -1,3 +1,9 @@
+/**
+ * @Class For manage API calls
+ * @static methods / propeties are usefull only for instance methods thats why i separate like that 
+ * @instance methods / propeties are usefull for common use in the rest of code-base   
+**/
+
 class ApiCalls {
 
   static singleton;
@@ -45,7 +51,7 @@ class ApiCalls {
       throw new Error('method fetchApi() of ApiCalls return a bad status something wrong with Api');
     }
 
-    return result
+    return result;
   }
 
   static createFetchRequestObject = (endPointObject) => {
@@ -108,5 +114,9 @@ class ApiCalls {
     return fetchResult;
   }
 }
+
+/**
+ * Create const for copy use full method for code-base of ApiCalls class
+**/
 
 const { postOrder, getAllProducts, getProduct } = ApiCalls.getSingleton();
