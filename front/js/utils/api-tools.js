@@ -29,6 +29,26 @@ class ApiCalls {
     )
   }
 
+  static productTypeGuard = {
+    colors: 'object',
+    _id: 'string',
+    name:'string',
+    price: 'number',
+    imageUrl: 'string',
+    description: 'string',
+    altTxt: 'string'
+  }
+
+  static orderTypeGuard = {
+    contact: 'object',
+    products: 'object',
+    orderId: 'string'
+  }
+
+  static typeVerificator = (typeGuardObject, ObjectToVerify) => (
+    Object.entries(typeGuardObject).every(([key, value]) => typeof(ObjectToVerify[key]) === value)
+  )
+
   static fetchApi = async (UrlRequest, fetchObject) => {  
     let result;
 
@@ -61,7 +81,7 @@ class ApiCalls {
   
   getAllProducts = async () => {
     let fetchResult;
-    const {apiEndpoints: { getAllProducts } } = ApiCalls;
+    const {apiEndpoints: { getAllProducts }, typeVerificator, productTypeGuard } = ApiCalls;
     const fetchRequestObject = ApiCalls.createFetchRequestObject(getAllProducts);
 
     try {
@@ -69,20 +89,28 @@ class ApiCalls {
     } catch (error) {
       console.error('Error on method getAllProducts() of ApiCalls instance | Error from =>', error);
     }
+    Object.values(fetchResult).forEach(() => {
+      if (typeVerificator(productTypeGuard)) {
+        throw new Error('return of method getAllProducts() of ApiCalls instance don\'t have the good type');
+      }
+    });
 
     return fetchResult;
   }
 
   getProduct = async (ProductId) => {
     let fetchResult;
-    const {apiEndpoints: { getProduct } } = ApiCalls;
+    const {apiEndpoints: { getProduct }, typeVerificator, productTypeGuard } = ApiCalls;
     const endPointObject = getProduct(ProductId);
-    const fetchRequestObject = ApiCalls.createFetchRequestObject(endPointObject);
+    const fetchRequestObject = ApiCalls.createFetchRequestObject(getProduct(ProductId));
 
     try {
       fetchResult = await ApiCalls.fetchApi(endPointObject.url, fetchRequestObject);
     } catch (error) {
       console.error('Error on method getProduct() of ApiCalls instance | Error from =>', error);
+    }
+    if (typeVerificator(productTypeGuard)) {
+      throw new Error('return of method getProduct() of ApiCalls instance don\'t have the good type');
     }
 
     return fetchResult;
@@ -90,7 +118,7 @@ class ApiCalls {
 
   postOrder = async (postContent) => {
     let fetchResult;
-    const {apiEndpoints: { postOrder } } = ApiCalls;
+    const {apiEndpoints: { postOrder }, typeVerificator, orderTypeGuard } = ApiCalls;
     const endPointObject = postOrder(postContent);
     const fetchRequestObject = ApiCalls.createFetchRequestObject(endPointObject);
 
@@ -98,6 +126,9 @@ class ApiCalls {
       fetchResult = await ApiCalls.fetchApi(endPointObject.url, fetchRequestObject);
     } catch (error) {
       console.error('Error on method postOrder() of ApiCalls instance | Error from =>', error);
+    }
+    if (typeVerificator(orderTypeGuard)) {
+      throw new Error('return of method getProduct() of ApiCalls instance don\'t have the good type');
     }
 
     return fetchResult;
