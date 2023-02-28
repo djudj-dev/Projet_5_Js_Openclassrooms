@@ -7,6 +7,9 @@
  * - re-synchronise new data with api
  * - display all content with dynamics cart data needed
  * For have the best reactive ,syncronized and  non-compromized data
+ * 
+ * @INFO Elements are indented for help readability
+ * 
  * @return { void }
 **/
 
@@ -60,7 +63,7 @@ cartRender = async () => {
               {
                 event: 'change',
                 eventCallback: async (event) => {
-                  setQuantity({ color, id, quantity }, event.target.value)
+                  setQuantity({ color, id, quantity }, event.target.value);
                   await cartRender();
                 }
               });
@@ -77,7 +80,7 @@ cartRender = async () => {
               { 
                 event: 'click', 
                 eventCallback: async () => {
-                  deleteFromCart(id) 
+                  deleteFromCart(id);
                   await cartRender();
                 }
               });
@@ -106,7 +109,14 @@ cartRender = async () => {
  * check all the input with their regex
  * if all good return object with true status
  * else return status false display error message on input errorInput
- * @param { formInputsObject : ObjectsOf{ input: HTMLElement, regex: Regex, errorInput}}
+ * @param { 
+ *   formInputsObject :
+ *    { 
+ *      input: HTMLElement, 
+ *      regex: Regex, 
+ *      errorInput: HTMLElement
+ *    }
+ * }
  * @return { boolean }
 **/
 
@@ -126,8 +136,18 @@ const isFormValid = (formInputsObject) => {
 /**
  * Function for format data for orderPost 
  * from inputs value & LocalStorage 'cart'
- * @param { formInputsObject : ObjectsOf{ input: HTMLElement, regex: Regex, errorInput}}
- * @return { contact: ObjectsOf{ key: string }, product: string[] }
+ * @param { 
+ *  formInputsObject :
+ *    { 
+ *      input: HTMLElement, 
+ *      regex: Regex, 
+ *      errorInput: HTMLElement
+ *    }
+ * }
+ * @return { 
+ *   contact: { key: string }, 
+ *   product: string[] 
+ * }
 **/
 
 const formatPostData = (formInputsObject) => {
@@ -156,7 +176,14 @@ const formatPostData = (formInputsObject) => {
  * Reducer of actions after for Submit 
  * if form is good return the data for post the order 
  * else display error message to customer & return undefined 
- * @param { formInputsObject : ObjectsOf{ input: HTMLElement, regex: Regex, errorInput}}
+ * @param { 
+ *  formInputsObject :
+ *    { 
+ *      input: HTMLElement, 
+ *      regex: Regex, 
+ *      errorInput: HTMLElement
+ *    }
+ * }
  * @return { void }
 **/
 

@@ -6,7 +6,7 @@
 
 class ApiCalls {
 
-  static method = {GET: "GET", POST: "POST"};
+  static method = { GET: "GET", POST: "POST" };
   static apiUrl = 'http://localhost:3000/api/products';
 
   static apiEndpoints = {
