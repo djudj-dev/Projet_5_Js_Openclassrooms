@@ -1,6 +1,6 @@
 /**
- * Insert the dynamic Html inside the root HtmlNode, from the result of API request 
- * @param { root: HtlmNode }
+ * Insert the dynamic Html inside the root HTMLElement, from the result of API request 
+ * @param { root: HTMLElement }
  * @return  { void }  
 **/
 

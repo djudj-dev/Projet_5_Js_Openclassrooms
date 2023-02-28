@@ -25,7 +25,7 @@ const insertHtml = async (id) => {
 
 /**
  * Verify HmtlNode Array property value does not equal to value of [nullValue] initialized inside the function
- * @param { elements: HmtlNode[] }
+ * @param { elements: HTMLElement[] }
  * @return { boolean }
 **/
 
@@ -43,7 +43,7 @@ const areNotNull = (elements) => {
  * if it's good and format data & send to cart
  * else display error message to user
  * @param { id: string }
- * @param { target: HtlmNode }
+ * @param { target: HTMLElement }
  * @return { void }
 **/
 
