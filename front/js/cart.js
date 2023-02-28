@@ -105,58 +105,32 @@ cartRender = async () => {
  * Function for check is form data is valid
  * check all the input with their regex
  * if all good return object with true status
- * else return status false & input(s) invalid 
- * @return { state: booleans, inputs?: string[] }
+ * else return status false display error message on input errorInput
+ * @param { formInputsObject : ObjectsOf{ input: HTMLElement, regex: Regex, errorInput}}
+ * @return { boolean }
 **/
 
 
-const isFormValid = () => {
-  const nameRegex = /^[a-zA-Z]{2,30}$/;
-  const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  const cityRegex = /^\w{3,40}$/;
-
-  const testInputsObject = {
-    firstName: {
-      input: document.getElementById('firstName').value, 
-      regex: nameRegex,
-      inputName: 'Prénom'
-    },
-    lastName: {
-      input: document.getElementById('lastName').value,
-      regex: nameRegex,
-      inputName: 'Nom'
-    },
-    email: {
-      input: document.getElementById('email').value,
-      regex: emailRegex,
-      inputName: 'Email'
-    },
-    city: {
-      input: document.getElementById('city').value,
-      regex: cityRegex,
-      inputName: 'Ville'
-    }
-  } 
-  
-  const inputWrong = [];
-  const state = Object.values(testInputsObject).forEach(({input, regex, inputName}) => {
-    const isValid = regex.test(input);
-    !isValid && (inputWrong.push(inputName));
+const isFormValid = (formInputsObject) => {
+  let isFormValid = true;
+  const invalidFieldText = 'champ invalide'
+  const state = Object.values(formInputsObject).forEach(({input:{ value } , regex, errorInput}) => {
+    const isValid = regex.test(value);
+    errorInput.innerHTML = !isValid ? invalidFieldText : "";
+    !isValid && (isFormValid = false);
   })
 
-  const returnObject = { status: (inputWrong.length === 0) };
-  !state && (returnObject.inputs = inputWrong);
-
-  return returnObject;
+  return isFormValid;
 }
 
 /**
  * Function for format data for orderPost 
  * from inputs value & LocalStorage 'cart'
- * @return { state: booleans, inputs?: string[] }
+ * @param { formInputsObject : ObjectsOf{ input: HTMLElement, regex: Regex, errorInput}}
+ * @return { contact: ObjectsOf{ key: string }, product: string[] }
 **/
 
-const formatPostData = () => {
+const formatPostData = (formInputsObject) => {
   const idArray = [];
   getCart().forEach( ({id, quantity}) => {
     if (quantity > 1) {
@@ -168,14 +142,10 @@ const formatPostData = () => {
     return idArray.push(id);
   });
 
+  let contact = {}; 
+  Object.entries(formInputsObject).forEach(([key, { input : { value }}]) => contact[key] = value )
   const postObject = {
-    contact : {
-      firstName: document.getElementById('firstName').value,
-      lastName: document.getElementById('lastName').value,
-      address: document.getElementById('address').value,
-      email: document.getElementById('email').value,
-      city: document.getElementById('city').value
-    },
+    contact,
     products: idArray
   }
 
@@ -185,32 +155,21 @@ const formatPostData = () => {
 /**
  * Reducer of actions after for Submit 
  * if form is good return the data for post the order 
- * else display error message to customer & return undefined  
- * @return { {contact:{ customerInfoData }, product: string[] } | undefined }
+ * else display error message to customer & return undefined 
+ * @param { formInputsObject : ObjectsOf{ input: HTMLElement, regex: Regex, errorInput}}
+ * @return { void }
 **/
 
-const formReducer = () => {
-  const warnigText = document.getElementById('warning_message');
-  warnigTextContainer = warnigText;
+const formReducer = async (formInputsObject) => {
+  const areInputsValid = isFormValid(formInputsObject);
 
-  const areInputsValid = isFormValid();
+  if (areInputsValid) {  
+    const postOrderData = formatPostData(formInputsObject);
+    const { orderId } = await postOrder(postOrderData);
 
-  if (areInputsValid.status) {  
-    warnigText.setAttribute('hidden',true)
-    const postObject = formatPostData();
-
-    return postObject;
+    return orderId ? (redirectPaymentConfirm(orderId)) : null;
   }
-
-  let errorString = `veuillez renseigner le(s) champ(s) : `;
-  areInputsValid.inputs.forEach((element => (
-    errorString += `- ${element} `
-  )));
-
-  warnigText.innerHTML = errorString;
-  warnigText.removeAttribute('hidden');
 }
-
 
 /**
  * Redirect user to confimation page with payementId URL in parameter 
@@ -225,13 +184,42 @@ const redirectPaymentConfirm = (paymentId) => (
  * End of the declarative code
  * init the render & event with window.onload
 **/
+const nameRegex = /^[a-zA-Z]{2,30}$/;
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const cityRegex = /^\w{3,40}$/;
+
+const formInputsObject = {
+  firstName: {
+    input: document.getElementById('firstName'), 
+    regex: nameRegex,
+    errorInput: document.getElementById('firstNameErrorMsg')
+  },
+  lastName: {
+    input: document.getElementById('lastName'),
+    regex: nameRegex,
+    errorInput: document.getElementById('lastNameErrorMsg')
+  },
+  address: {
+    input: document.getElementById('address'),
+    regex: cityRegex,
+    errorInput: document.getElementById('addressErrorMsg')
+  },
+  city: {
+    input: document.getElementById('city'),
+    regex: cityRegex,
+    errorInput: document.getElementById('cityErrorMsg')
+  },
+  email: {
+    input: document.getElementById('email'),
+    regex: emailRegex,
+    errorInput: document.getElementById('emailErrorMsg')
+  }
+} 
 
 window.onload = () => {
   cartRender();
   document.getElementById('order').addEventListener('click', async (event) => { 
     event.preventDefault();
-    const postData = formReducer();
-    const postResult = postData ? await postOrder(postData) : null;
-    postResult && (redirectPaymentConfirm(postResult.orderId));
+    formReducer(formInputsObject);
   });
 }

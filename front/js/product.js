@@ -14,8 +14,8 @@ const insertHtml = async (id) => {
   document.getElementById('description').innerHTML = product.description;
 
   for (let color of product.colors) {
-    let option = createElement('option', { innerHTML: color, value: color });
-    document.getElementById('colors').appendChild(option);
+    let options = createElement('option', { innerHTML: color, value: color });
+    document.getElementById('colors').appendChild(options);
   }
 
   document.getElementById('colors').value = "";
