@@ -12,40 +12,43 @@
 
 cartRender = async () => {
   const actualCart = getCart();
-  const container = document.getElementById('cart__items')
-  let articlesArray = []
-  let totalPrice = 0;
-  let totalProduct = 0;
+  const root = document.getElementById('cart__items');
+  const renderIncrement = {
+    articlesArray: [],
+    totalPrice: 0,
+    totalProducts: 0,
+  }
 
   for (product of actualCart) {
     const { color, id, quantity } =  product;
     const { name, price, imageUrl, altTxt } = await getProduct(product.id);
-    totalPrice += (price * quantity);
-    totalProduct += quantity;
+    renderIncrement.totalPrice += (price * quantity);
+    renderIncrement.totalProducts += quantity;
 
     const article = createElement('article', {className: 'cart__item'});
 
-      const cart__item__img = createElement('div', { className: 'cart__item__img' });
+      const cartItemImg = createElement('div', { className: 'cart__item__img' });
 
         const img = createElement('img', {src: imageUrl, alt: altTxt});
-      cart__item__img.append(img);
 
-      const cart__item__content =  createElement('div', { className: 'cart__item__content' });
+      cartItemImg.append(img);
+
+      const cartItemContent =  createElement('div', { className: 'cart__item__content' });
+
+        const cartItemContentDescription = createElement('div', { className: 'cart__item__content_description' });
+
+          const nameElement = createElement('h2', { innerHTML: name });
+          const descritpionElement = createElement('p', { innerHTML: color });
+          const descritpionPrice = createElement('p', { innerHTML: priceFormat.format(price) });
+
+        cartItemContentDescription.append(nameElement, descritpionElement, descritpionPrice);
   
-
-        const cart__item__content_description = createElement('div', { className: 'cart__item__content_description' });
-
-          const name__element = createElement('h2', { innerHTML: name });
-          const descritpion__element = createElement('p', { innerHTML: color });
-          const descritpion__price = createElement('p', { innerHTML: priceFormat.format(price) });
-        cart__item__content_description.append(name__element, descritpion__element, descritpion__price);
-  
-        const  cart__item__content__settings = createElement('div', { className: 'cart__item__content__settings' })
+        const  cartItemContentSettings = createElement('div', { className: 'cart__item__content__settings' });
           
-          const cart__item__content__settings__quantity = createElement('div', { className: 'cart__item__content__settings__quantity' })
+          const cartItemContentSettingsQuantity = createElement('div', { className: 'cart__item__content__settings__quantity' });
 
-            const quantity__element = createElement('p', { innerHTML: 'Qté : '})
-            const item_quantity =  createElement('input', 
+            const quantityElement = createElement('p', { innerHTML: 'Qté : '});
+            const itemQuantity =  createElement('input', 
               { 
                 type: 'number',
                 className: 'itemQuantity',
@@ -60,38 +63,42 @@ cartRender = async () => {
                   setQuantity({ color, id, quantity }, event.target.value)
                   await cartRender();
                 }
-              })
-          cart__item__content__settings__quantity.append(quantity__element, item_quantity)
+              });
 
-        const cart__item__content__settings__delete = createElement('div', { className: 'cart__item__content__settings__delete' })
+          cartItemContentSettingsQuantity.append(quantityElement, itemQuantity);
 
-          const deleteItem =  createElement('p', 
-            { 
-              className: 'deleteItem', 
-              innerHTML: 'Supprimer'
-            },
-            { 
-              event: 'click', 
-              eventCallback: async () => {
-                deleteFromCart(id) 
-                await cartRender();
-              }
-            })
-        cart__item__content__settings__delete.append(deleteItem)
-    
-      cart__item__content__settings.append(cart__item__content__settings__quantity, cart__item__content__settings__delete)
-      cart__item__content.append(cart__item__content_description, cart__item__content__settings)
-    article.append(cart__item__img, cart__item__content)
+          const cartItemContentSettingsDelete = createElement('div', { className: 'cart__item__content__settings__delete' })
 
-    articlesArray = [...articlesArray, article]
+            const deleteItem =  createElement('p', 
+              { 
+                className: 'deleteItem', 
+                innerHTML: 'Supprimer'
+              },
+              { 
+                event: 'click', 
+                eventCallback: async () => {
+                  deleteFromCart(id) 
+                  await cartRender();
+                }
+              });
+
+          cartItemContentSettingsDelete.append(deleteItem);
+
+        cartItemContentSettings.append(cartItemContentSettingsQuantity, cartItemContentSettingsDelete);
+
+      cartItemContent.append(cartItemContentDescription, cartItemContentSettings);
+
+    article.append(cartItemImg, cartItemContent);
+    renderIncrement.articlesArray.push(article);
   }
 
-  while (container.firstChild) {
-    container.removeChild(container.lastChild);
+  while (root.firstChild) {
+    root.removeChild(root.lastChild);
   }
-  document.getElementById('totalPrice').innerHTML = totalPrice;
-  document.getElementById('totalQuantity').innerHTML = totalProduct;
-  articlesArray.forEach( article => container.appendChild(article));
+
+  document.getElementById('totalPrice').innerHTML = renderIncrement.totalPrice;
+  document.getElementById('totalQuantity').innerHTML = renderIncrement.totalProducts;
+  renderIncrement.articlesArray.forEach( article => root.appendChild(article));
 }
 
 /**
@@ -131,16 +138,16 @@ const isFormValid = () => {
     }
   } 
   
-  let inputWrong = [];
+  const inputWrong = [];
   const state = Object.values(testInputsObject).forEach(({input, regex, inputName}) => {
-    const isValid = regex.test(input)
-    !isValid && (inputWrong = [...inputWrong, inputName])
+    const isValid = regex.test(input);
+    !isValid && (inputWrong.push(inputName));
   })
 
   const returnObject = { status: (inputWrong.length === 0) };
-  !state && (returnObject.inputs = inputWrong)
+  !state && (returnObject.inputs = inputWrong);
 
-  return returnObject
+  return returnObject;
 }
 
 /**
@@ -190,7 +197,7 @@ const formReducer = () => {
 
   if (areInputsValid.status) {  
     warnigText.setAttribute('hidden',true)
-    const postObject = formatPostData()
+    const postObject = formatPostData();
 
     return postObject;
   }
@@ -210,9 +217,9 @@ const formReducer = () => {
  * @return { void }
 **/
 
-const redirectPaymentConfirm = (paymentId) => {
+const redirectPaymentConfirm = (paymentId) => (
   location.href = `file:///home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/confirmation.html?paymentId=${paymentId}`
-}
+)
 
 /**
  * End of the declarative code
@@ -220,7 +227,7 @@ const redirectPaymentConfirm = (paymentId) => {
 **/
 
 window.onload = () => {
-  cartRender()
+  cartRender();
   document.getElementById('order').addEventListener('click', async (event) => { 
     event.preventDefault();
     const postData = formReducer();

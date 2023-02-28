@@ -6,10 +6,9 @@
 
 const insertHtml = async (id) => {
   const product = await getProduct(id);
-
   const image = createElement('img',{ src: product.imageUrl, alt: product.altTxt });
-  document.getElementsByClassName('item__img')[0].appendChild(image);
 
+  document.getElementsByClassName('item__img')[0].appendChild(image);
   document.getElementById('price').innerHTML = priceFormat.format(product.price);
   document.getElementById('title').innerHTML = product.name;
   document.getElementById('description').innerHTML = product.description;
@@ -80,10 +79,10 @@ const formDataChecker = (id, target) => {
 **/
 
 window.onload = () => {
-  const UrlIdParams = new URLSearchParams(location.search).get('id')
+  const UrlIdParams = new URLSearchParams(location.search).get('id');
   console.log(UrlIdParams);
   insertHtml(UrlIdParams);
-  document.getElementById('addToCart').addEventListener('click', (event) => formDataChecker(UrlIdParams, event.target))
+  document.getElementById('addToCart').addEventListener('click', (event) => formDataChecker(UrlIdParams, event.target));
 }
 
 

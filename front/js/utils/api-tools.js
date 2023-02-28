@@ -6,7 +6,6 @@
 
 class ApiCalls {
 
-  static singleton;
   static method = {GET: "GET", POST: "POST"};
   static apiUrl = 'http://localhost:3000/api/products';
 
@@ -30,32 +29,23 @@ class ApiCalls {
     )
   }
 
-  static getSingleton = () => {
-    if (!ApiCalls.singleton) {
-      ApiCalls.singleton = new ApiCalls
-    }
-
-    return ApiCalls.singleton
-  }
-
   static fetchApi = async (UrlRequest, fetchObject) => {  
     let result;
 
     try {
-      result = await fetch(UrlRequest, fetchObject)
+      result = await fetch(UrlRequest, fetchObject);
       result = result.json();
     } catch (error) {
-      throw new Error('Error on method fetchApi() of ApiCalls instance :',error);
+      throw new Error('Error on method fetchApi() of ApiCalls instance | Error from =>', error);
     }
     if (result.status > 299 || result.status < 200) {
-      throw new Error('method fetchApi() of ApiCalls return a bad status something wrong with Api');
+      throw new Error(`method fetchApi() of ApiCalls return a bad status something wrong with Api | status : ${result.status}`);
     }
 
     return result;
   }
 
-  static createFetchRequestObject = (endPointObject) => {
-    
+  static createFetchRequestObject = (endPointObject) => { 
     const fetchRequestObject = {
       method: endPointObject.method,
       mode: "cors",
@@ -64,7 +54,6 @@ class ApiCalls {
         'Content-Type': 'application/json' 
       }
     }
-
     endPointObject.method === ApiCalls.method.POST && endPointObject.body && (fetchRequestObject.body = endPointObject.body);
 
     return fetchRequestObject;
@@ -78,7 +67,7 @@ class ApiCalls {
     try {
       fetchResult = await ApiCalls.fetchApi(getAllProducts.url, fetchRequestObject);
     } catch (error) {
-      console.error('Error on method getAllProducts() of ApiCalls instance :',error);
+      console.error('Error on method getAllProducts() of ApiCalls instance | Error from =>', error);
     }
 
     return fetchResult;
@@ -93,7 +82,7 @@ class ApiCalls {
     try {
       fetchResult = await ApiCalls.fetchApi(endPointObject.url, fetchRequestObject);
     } catch (error) {
-      console.error('Error on method getProduct() of ApiCalls instance :',error);
+      console.error('Error on method getProduct() of ApiCalls instance | Error from =>', error);
     }
 
     return fetchResult;
@@ -108,7 +97,7 @@ class ApiCalls {
     try {
       fetchResult = await ApiCalls.fetchApi(endPointObject.url, fetchRequestObject);
     } catch (error) {
-      console.error('Error on method postOrder() of ApiCalls instance :',error);
+      console.error('Error on method postOrder() of ApiCalls instance | Error from =>', error);
     }
 
     return fetchResult;
@@ -119,4 +108,4 @@ class ApiCalls {
  * Create const for copy use full method for code-base of ApiCalls class
 **/
 
-const { postOrder, getAllProducts, getProduct } = ApiCalls.getSingleton();
+const { postOrder, getAllProducts, getProduct } = new ApiCalls;

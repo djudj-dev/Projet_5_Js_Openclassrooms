@@ -5,7 +5,7 @@
 **/
 
 insertHtml = (UrlIdParams) => {
-  document.getElementById('orderId').innerHTML = UrlIdParams
+  document.getElementById('orderId').innerHTML = UrlIdParams;
 }
 
 /** 
@@ -14,7 +14,7 @@ insertHtml = (UrlIdParams) => {
 **/
 
 window.onload = () => {
-  const UrlIdParams = new URLSearchParams(location.search).get('paymentId')
-  insertHtml(UrlIdParams)
+  const UrlIdParams = new URLSearchParams(location.search).get('paymentId');
+  insertHtml(UrlIdParams);
   resetCart();
 }

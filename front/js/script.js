@@ -6,6 +6,7 @@
 
 const insertHtml = async (root) => {
   const products = await getAllProducts();
+
   for (let product of products) {
     let link = createElement('a', {
       href : `/home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/product.html?id=${product._id}`
@@ -25,4 +26,4 @@ const insertHtml = async (root) => {
  * init the render with window.onload 
 **/
 
-window.onload = () => insertHtml(document.getElementById('items'))
+window.onload = () => insertHtml(document.getElementById('items'));

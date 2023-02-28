@@ -11,9 +11,10 @@ const createElement = (type, elementAttribute = undefined, eventListenerAttribut
   elementAttribute && Object.keys(elementAttribute).forEach(attribute => {
     element[attribute] = elementAttribute[attribute];
   });
+
   if (eventListenerAttribute) {
     const { event, eventCallback } = eventListenerAttribute 
-    element.addEventListener(event, (event) => eventCallback(event))
+    element.addEventListener(event, (event) => eventCallback(event));
   }
 
   return element;
@@ -24,4 +25,4 @@ const createElement = (type, elementAttribute = undefined, eventListenerAttribut
  * @return  { Intl.NumberFormat }
 **/
 
-const priceFormat = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
+const priceFormat = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });

@@ -4,18 +4,20 @@
  * @instance methods / propeties are usefull for common use in the rest of code-base   
 **/
 
-
 class LocalStorageCartManager {
 
-  static localStorageCart = 'cart';
-  static singleton;
+  constructor () {
+    LocalStorageCartManager.initLocalStorage()
+  }
+
+  static cartIndex = 'cart';
 
   static initLocalStorage = () => (
-    !localStorage.getItem(LocalStorageCartManager.localStorageCart) && localStorage.setItem(LocalStorageCartManager.localStorageCart, '[]')
+    !localStorage.getItem(LocalStorageCartManager.cartIndex) && localStorage.setItem(LocalStorageCartManager.cartIndex, '[]')
   )
 
   static setToLocalStorage = (cartArray) => (
-    localStorage.setItem(LocalStorageCartManager.localStorageCart, JSON.stringify(cartArray))
+    localStorage.setItem(LocalStorageCartManager.cartIndex, JSON.stringify(cartArray))
   )
 
   static findInCart = (productsObject, actualCart) => {
@@ -23,7 +25,7 @@ class LocalStorageCartManager {
       for (let element in actualCart) {
         if (actualCart[element].id === productsObject.id && actualCart[element].color === productsObject.color) {
 
-          return { state: true, index: element }
+          return { state: true, index: element };
         }
       }
     }
@@ -31,31 +33,22 @@ class LocalStorageCartManager {
     return { state: false };
   }
 
-  static getSingleton = () => {
-    if (!LocalStorageCartManager.singleton) {
-      LocalStorageCartManager.singleton = new LocalStorageCartManager;
-    }
-
-    return LocalStorageCartManager.singleton
-  }
-
   resetCart = () => (
-    localStorage.setItem(LocalStorageCartManager.localStorageCart, '[]')
+    localStorage.setItem(LocalStorageCartManager.cartIndex, '[]')
   )
 
   getCart = () => {
-    const result = () => JSON.parse(localStorage.getItem(LocalStorageCartManager.localStorageCart))
+    const result = () => JSON.parse(localStorage.getItem(LocalStorageCartManager.cartIndex))
     if(!result()) {
-      LocalStorageCartManager.initLocalStorage()
+      LocalStorageCartManager.initLocalStorage();
     }
 
-    return result()
+    return result();
   }
 
   addToCart = (productsObject) => {
     const { findInCart, setToLocalStorage } = LocalStorageCartManager
     const actualCart = this.getCart();
-    !actualCart && (LocalStorageCartManager.initLocalStorage);
     const {state} = findInCart(productsObject, actualCart);
 
     if (state){
@@ -67,28 +60,28 @@ class LocalStorageCartManager {
   }
 
   deleteFromCart = (productsObject) => {
-    const actualCart = this.getCart()
+    const actualCart = this.getCart();
     const newCart = actualCart.filter((element) => element.id !== productsObject);
 
-    return LocalStorageCartManager.setToLocalStorage(newCart)
+    return LocalStorageCartManager.setToLocalStorage(newCart);
   }
 
   incrementCartQuantity = (productObject, incrementCartQuantity = 1) => {
-    const { findInCart, setToLocalStorage } = LocalStorageCartManager
+    const { findInCart, setToLocalStorage } = LocalStorageCartManager;
     const actualCart = this.getCart();
-    const { state, index } = findInCart(productObject,  actualCart);
+    const { state, index } = findInCart(productObject, actualCart);
     
     if (state) {
       actualCart[index].quantity += incrementCartQuantity;
 
       return setToLocalStorage(actualCart);
     } else {
-      throw new Error('product use for incrementCartQuantity() method of LocalStorageCartManager don\'t exist it cant be increment ')
+      throw new Error('product use for incrementCartQuantity() method of LocalStorageCartManager don\'t exist it cant be increment ');
     }
   }
 
   decrementCartQuantity = (productObject, decrementCartQuantity = 1) => {
-    const { findInCart, setToLocalStorage } = LocalStorageCartManager
+    const { findInCart, setToLocalStorage } = LocalStorageCartManager;
     const actualCart = this.getCart();
     const { state, index } = findInCart(productObject, actualCart);
 
@@ -101,12 +94,12 @@ class LocalStorageCartManager {
 
       return setToLocalStorage(actualCart);
     } else {
-      throw new Error('product use for decrementCartQuantity method of LocalStorageCartManager don\'t exist it cant be increment ')
+      throw new Error('product use for decrementCartQuantity method of LocalStorageCartManager don\'t exist it cant be increment ');
     }
   }
 
   setQuantity = (productObject, quantity) => {
-    const { findInCart, setToLocalStorage } = LocalStorageCartManager
+    const { findInCart, setToLocalStorage } = LocalStorageCartManager;
     const actualCart = this.getCart();
     const { state, index } = findInCart(productObject, actualCart);
 
@@ -115,7 +108,7 @@ class LocalStorageCartManager {
 
       return setToLocalStorage(actualCart);
     } else {
-      throw new Error('product use for setCartQuantity method of LocalStorageCartManager don\'t exist it cant be increment ')
+      throw new Error('product use for setCartQuantity method of LocalStorageCartManager don\'t exist it cant be increment ');
     }
   }
 }
@@ -124,4 +117,4 @@ class LocalStorageCartManager {
  * Create const for copy use full method for code-base of LocalStorageCartManager class
 **/
 
-const {addToCart, getCart, deleteFromCart, incrementCartQuantity, decrementCartQuantity, setQuantity , resetCart} = LocalStorageCartManager.getSingleton()
+const {addToCart, getCart, deleteFromCart, incrementCartQuantity, decrementCartQuantity, setQuantity , resetCart} = new LocalStorageCartManager
