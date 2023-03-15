@@ -5,7 +5,7 @@
 **/
 
 insertHtml = (UrlIdParams) => {
-  document.getElementById('orderId').innerHTML = UrlIdParams;
+  document.getElementById('orderId').textContent = UrlIdParams;
 }
 
 /** 

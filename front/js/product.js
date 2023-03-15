@@ -9,12 +9,12 @@ const insertHtml = async (id) => {
   const image = createElement('img',{ src: imageUrl, alt: altTxt });
 
   document.getElementsByClassName('item__img')[0].appendChild(image);
-  document.getElementById('price').innerHTML = priceFormat.format(price);
-  document.getElementById('title').innerHTML = name;
-  document.getElementById('description').innerHTML = description;
+  document.getElementById('price').textContent = priceFormat.format(price);
+  document.getElementById('title').textContent = name;
+  document.getElementById('description').textContent = description;
 
   for (let color of colors) {
-    let options = createElement('option', { innerHTML: color, value: color });
+    let options = createElement('option', { textContent: color, value: color });
     document.getElementById('colors').appendChild(options);
   }
 
@@ -68,7 +68,7 @@ const formDataChecker = (id, target) => {
   
   if (!completeMessageBox) {
     const completeMessageText = 'Veuillez choisir une couleur et une quantité avant d\'ajouter au panier.';
-    const completeMessageElement = createElement('p', { id: "complete_form_message", innerHTML: completeMessageText});
+    const completeMessageElement = createElement('p', { id: "complete_form_message", textContent: completeMessageText});
     parentElement.insertBefore(completeMessageElement, target);
   }
 }

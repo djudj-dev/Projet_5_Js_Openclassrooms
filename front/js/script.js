@@ -14,8 +14,8 @@ const insertHtml = async (root) => {
     });
     let article = createElement('article');
     let image = createElement('img', { src: imageUrl, alt: altTxt });
-    let title = createElement('h3', { className: 'productName', innerHTML: name });
-    let text = createElement('p', { className: 'productDescription', innerHTML: description });
+    let title = createElement('h3', { className: 'productName', textContent: name });
+    let text = createElement('p', { className: 'productDescription', textContent: description });
 
     article.append(image, title, text);
     linkContainer.appendChild(article);

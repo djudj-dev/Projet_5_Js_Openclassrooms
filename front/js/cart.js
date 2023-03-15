@@ -13,7 +13,83 @@
  * @return { void }
 **/
 
-cartRender = async () => {
+const cartItemComponent = ({ 
+  color, 
+  id, 
+  quantity, 
+  name, 
+  price, 
+  imageUrl, 
+  altTxt }) => {
+  const article = createElement('article', {className: 'cart__item'});
+
+      const cartItemImg = createElement('div', { className: 'cart__item__img' });
+
+        const img = createElement('img', {src: imageUrl, alt: altTxt});
+
+      cartItemImg.append(img);
+
+      const cartItemContent =  createElement('div', { className: 'cart__item__content' });
+
+        const cartItemContentDescription = createElement('div', { className: 'cart__item__content_description' });
+
+          const nameElement = createElement('h2', { textContent: name });
+          const descritpionElement = createElement('p', { textContent: color });
+          const descritpionPrice = createElement('p', { textContent: priceFormat.format(price) });
+
+        cartItemContentDescription.append(nameElement, descritpionElement, descritpionPrice);
+  
+        const  cartItemContentSettings = createElement('div', { className: 'cart__item__content__settings' });
+          
+          const cartItemContentSettingsQuantity = createElement('div', { className: 'cart__item__content__settings__quantity' });
+
+            const quantityElement = createElement('p', { textContent: 'Qté : '});
+            const itemQuantity =  createElement('input', 
+              { 
+                type: 'number',
+                className: 'itemQuantity',
+                name: 'itemQuantity',
+                min: 1,
+                max: 100,
+                value: quantity
+              },
+              {
+                event: 'change',
+                eventCallback: async (event) => {
+                  setQuantity({ color, id, quantity }, event.target.value);
+                  cartRender();
+                }
+              });
+
+          cartItemContentSettingsQuantity.append(quantityElement, itemQuantity);
+
+          const cartItemContentSettingsDelete = createElement('div', { className: 'cart__item__content__settings__delete' })
+
+            const deleteItem =  createElement('p', 
+              { 
+                className: 'deleteItem', 
+                textContent: 'Supprimer'
+              },
+              { 
+                event: 'click', 
+                eventCallback: async () => {
+                  deleteFromCart(id);
+                  cartRender();
+                }
+              });
+
+          cartItemContentSettingsDelete.append(deleteItem);
+
+        cartItemContentSettings.append(cartItemContentSettingsQuantity, cartItemContentSettingsDelete);
+
+      cartItemContent.append(cartItemContentDescription, cartItemContentSettings);
+
+    article.append(cartItemImg, cartItemContent);
+
+    return article;
+}
+
+const cartRender = async () => {
   const actualCart = getCart();
   const root = document.getElementById('cart__items');
   const renderIncrement = {
@@ -28,70 +104,7 @@ cartRender = async () => {
     renderIncrement.totalPrice += (price * quantity);
     renderIncrement.totalProducts += quantity;
 
-    const article = createElement('article', {className: 'cart__item'});
-
-      const cartItemImg = createElement('div', { className: 'cart__item__img' });
-
-        const img = createElement('img', {src: imageUrl, alt: altTxt});
-
-      cartItemImg.append(img);
-
-      const cartItemContent =  createElement('div', { className: 'cart__item__content' });
-
-        const cartItemContentDescription = createElement('div', { className: 'cart__item__content_description' });
-
-          const nameElement = createElement('h2', { innerHTML: name });
-          const descritpionElement = createElement('p', { innerHTML: color });
-          const descritpionPrice = createElement('p', { innerHTML: priceFormat.format(price) });
-
-        cartItemContentDescription.append(nameElement, descritpionElement, descritpionPrice);
-  
-        const  cartItemContentSettings = createElement('div', { className: 'cart__item__content__settings' });
-          
-          const cartItemContentSettingsQuantity = createElement('div', { className: 'cart__item__content__settings__quantity' });
-
-            const quantityElement = createElement('p', { innerHTML: 'Qté : '});
-            const itemQuantity =  createElement('input', 
-              { 
-                type: 'number',
-                className: 'itemQuantity',
-                name: 'itemQuantity',
-                min: 1,
-                max: 100,
-                value: quantity
-              },
-              {
-                event: 'change',
-                eventCallback: async (event) => {
-                  setQuantity({ color, id, quantity }, event.target.value);
-                  await cartRender();
-                }
-              });
-
-          cartItemContentSettingsQuantity.append(quantityElement, itemQuantity);
-
-          const cartItemContentSettingsDelete = createElement('div', { className: 'cart__item__content__settings__delete' })
-
-            const deleteItem =  createElement('p', 
-              { 
-                className: 'deleteItem', 
-                innerHTML: 'Supprimer'
-              },
-              { 
-                event: 'click', 
-                eventCallback: async () => {
-                  deleteFromCart(id);
-                  await cartRender();
-                }
-              });
-
-          cartItemContentSettingsDelete.append(deleteItem);
-
-        cartItemContentSettings.append(cartItemContentSettingsQuantity, cartItemContentSettingsDelete);
-
-      cartItemContent.append(cartItemContentDescription, cartItemContentSettings);
-
-    article.append(cartItemImg, cartItemContent);
+    const article = cartItemComponent({ color, id, quantity, name, price, imageUrl, altTxt });
     renderIncrement.articlesArray.push(article);
   }
 
@@ -99,9 +112,9 @@ cartRender = async () => {
     root.removeChild(root.lastChild);
   }
 
-  document.getElementById('totalPrice').innerHTML = renderIncrement.totalPrice;
-  document.getElementById('totalQuantity').innerHTML = renderIncrement.totalProducts;
-  renderIncrement.articlesArray.forEach( article => root.appendChild(article));
+  document.getElementById('totalPrice').textContent = renderIncrement.totalPrice;
+  document.getElementById('totalQuantity').textContent = renderIncrement.totalProducts;
+  renderIncrement.articlesArray.forEach(article => root.appendChild(article));
 }
 
 /**
@@ -126,7 +139,7 @@ const isFormValid = (formInputsObject) => {
   const invalidFieldText = 'champ invalide'
   const state = Object.values(formInputsObject).forEach(({input:{ value } , regex, errorInput}) => {
     const isValid = regex.test(value);
-    errorInput.innerHTML = !isValid ? invalidFieldText : "";
+    errorInput.textContent = !isValid ? invalidFieldText : "";
     !isValid && (isFormValid = false);
   })
 
