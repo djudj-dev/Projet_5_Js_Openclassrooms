@@ -4,13 +4,14 @@
  * @return  { void }  
 **/
 
+
 const insertHtml = async (root) => {
   const products = await getAllProducts();
 
   for (let product of products) {
     const { imageUrl, name, description, altTxt, _id} = product
     let linkContainer = createElement('a', {
-      href : `/home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/product.html?id=${_id}`
+      href : link.product(_id)
     });
     let article = createElement('article');
     let image = createElement('img', { src: imageUrl, alt: altTxt });

@@ -26,3 +26,10 @@ const createElement = (type, elementAttribute = undefined, eventListenerAttribut
 **/
 
 const priceFormat = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+
+const root = window.location.href.substring(0, window.location.href.indexOf('/front/html/'));
+
+const link = {
+  product: (id) => `${root}/front/html/product.html?id=${id}`,
+  paymentConfirm: (id) => `${root}/front/html/confirmation.html?paymentId=${id}`
+}

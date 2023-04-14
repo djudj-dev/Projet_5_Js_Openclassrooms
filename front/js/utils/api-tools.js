@@ -10,7 +10,7 @@ class ApiCalls {
   static apiUrl = 'http://localhost:3000/api/products';
 
   static apiEndpoints = {
-    getAllProducts : {
+    getAllProducts: {
       url: `${this.apiUrl}/`,
       method: this.method.GET
     },

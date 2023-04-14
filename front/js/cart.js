@@ -133,7 +133,6 @@ const cartRender = async () => {
  * @return { boolean }
 **/
 
-
 const isFormValid = (formInputsObject) => {
   let isFormValid = true;
   const invalidFieldText = 'champ invalide'
@@ -217,7 +216,7 @@ const formReducer = async (formInputsObject) => {
 **/
 
 const redirectPaymentConfirm = (paymentId) => (
-  location.href = `file:///home/ghost/Documents/projet5/P5-Dev-Web-Kanap/front/html/confirmation.html?paymentId=${paymentId}`
+  location.href = link.paymentConfirm(paymentId)
 )
 
 /**
